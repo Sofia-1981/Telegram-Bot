@@ -13,9 +13,9 @@ def start(message):
 @bot.message_handler()
 def get_text(message):
     some_exp = r'^(https?:\/\/)?([\w-]{1,32}\.[\w-]{1,32})[^\s@]*$'
-    if re.fullmatch(some_exp, message):
-        response = requests.get(message) # ошибка здесь,message должен поступить как 'ссылка'
-        soup = BeautifulSoup(response.text)
+    if re.fullmatch(some_exp, message.text):
+        response = requests.get(message.text)
+        soup = BeautifulSoup(response.text, features='html.parser')
         text_ = soup.get_text()
         bot.send_message(message.chat.id, text_, parse_mode='html')
     else:
