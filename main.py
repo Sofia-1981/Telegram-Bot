@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import requests
 import openai
 
+
 bot = telebot.TeleBot(config.Tg_token)
 openai.api_key = config.OpAi_token
 @bot.message_handler(commands=['start'])
@@ -19,27 +20,34 @@ def get_text(message):
         response = requests.get(message.text)
         soup = BeautifulSoup(response.text, features='html.parser')
         text_ = soup.get_text()
-        if len(text_) > 4096:
-            for i in range(0, len(text_), 4096):
-                text_i = text_[i:i+4096]
+        text_spl = text_.split()
+        if len(text_spl) > 2700:
+            sum_res = ''
+            for i in range(0, len(text_spl), 2700):
+                text_i = text_[i:i+2700]
                 response1 = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=[{"role": "system", "content": "Ты ассистент, который обобщает текст."},
                         {"role": "user", "content": text_i}],
                 temperature=0.7,
-                max_tokens=1950,
+                max_tokens=1350,
                 top_p=1.0,
                 frequency_penalty=0.0,
                 presence_penalty=1
                 )
-                bot.send_message(message.chat.id, response1['choices'][0]['message']['content'])
+                result = response1['choices'][0]['message']['content']
+                sum_res += result
+            if len(sum_res) < 4096:
+                    bot.send_message(message.chat.id, sum_res)
+            else:
+                    bot.send_message(message.chat.id, result)
         else:
                 response1 = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
                 messages=[{"role": "system", "content": "Ты ассистент, который обобщает текст."},
                           {"role": "user", "content": text_}],
                 temperature=0.7,
-                max_tokens=1950,
+                max_tokens=2000,
                 top_p=1.0,
                 frequency_penalty=0.0,
                 presence_penalty=1
