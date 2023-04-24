@@ -38,25 +38,28 @@ def get_text(message):
         text_ = soup.get_text().replace('\n', ' ')
         text_spl = text_.split(" ")
         text_spl_clear = list(filter(None, text_spl))
-        text_spl_clear1 = list(filter(None, text_spl))
-        while len(text_spl_clear) > 2000:
+        a = True
+        while a:
+            a = False
             sum_res = ''
-            for i in range(0, len(text_spl_clear), 2000):
-                text_chunk_array = text_spl_clear[i:i+2000]
-                text_chunk = ' '.join(text_chunk_array)
-                result = chat_gpt_call(text_chunk, 0.7, 1000)
-                sum_res = sum_res + " " + result
-                time.sleep(5)
-            result_sum = chat_gpt_call(sum_res, 0.7, 1000)
+            try:
+                for i in range(0, len(text_spl_clear), 2000):
+                    text_chunk_array = text_spl_clear[i:i+2000]
+                    text_chunk = ' '.join(text_chunk_array)
+                    result = chat_gpt_call(text_chunk, 0.7, 1000)
+                    sum_res = sum_res + " " + result
+                result_sum = chat_gpt_call(sum_res, 0.7, 1000)
+            except openai.error.RateLimitError:
+                    time.sleep(20)
+                    result = chat_gpt_call(text_chunk, 0.7, 1000)
+                    sum_res = sum_res + " " + result
+                    time.sleep(5)
+                    result_sum = chat_gpt_call(sum_res, 0.7, 1000)
             if len(result_sum) >= 2000:
                 text_spl_clear = result_sum
             else:
                 bot.send_message(message.chat.id, result_sum)
                 text_spl_clear = result_sum
-        if len(text_spl_clear1) < 2000:
-            text_str = ' '.join(text_spl_clear1)
-            result_2 = chat_gpt_call(text_str, 0.7, 2000)
-            bot.send_message(message.chat.id, result_2)
     else:
         bot.send_message(message.chat.id, message.text, parse_mode='html')
 
