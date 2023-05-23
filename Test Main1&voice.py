@@ -14,7 +14,6 @@ import sqlite3
 from telebot import types
 import random
 from telebot import custom_filters
-#import uuid
 import os
 import speech_recognition as sr
 from ffmpeg.ffmpeg import FFmpeg
@@ -65,8 +64,6 @@ def info_about_user(message):
         #cur.execute("DELETE FROM users WHERE lname='Statsenko'")
         cur.execute("INSERT INTO users VALUES (?, ?, ?, ?, ?, ?)", (id_, first_name_, last_name_, email_, 0, registrated_))
         cur.execute("""SELECT * from users""")
-        # global records
-        # records = cur.fetchall()
         conn.commit()
         conn.close()
         global a
@@ -287,24 +284,8 @@ def get_audio_messages(message):
 bot.polling(none_stop=True, interval=0)
 
 
-# import speech_recognition as sr
-#
-# filename = "C:\\Users\\79298\\PycharmProjects\\pythonProject7\\Sound_05987.mp3"
-# r = sr.Recognizer()
-#
-# # open the file
-# with sr.AudioFile(filename) as source:
-#     # listen for the data (load audio to memory)
-#     audio_data = r.record(source)
-#     # recognize (convert from speech to text)
-#     text = r.recognize_google(audio_data)
-#
-# print(text)
 
-# model = whisper.load_model("base")
-# result = model.transcribe("Sound_05987.mp3", fp16=False) #"new_file.wav"
-#
-# print(result["text"])
+
 
 
 
